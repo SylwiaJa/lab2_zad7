@@ -19,8 +19,8 @@ public class TextFile {
             while (ready) {
                 txtWritten.await();
             }
-            FileWriter f = new FileWriter(fileName, true);
-            try (BufferedWriter out = new BufferedWriter(f)) {
+            try (FileWriter f = new FileWriter(fileName, true);
+                 BufferedWriter out = new BufferedWriter(f)) {
                 out.write(sc.nextLine());
                 out.newLine();
             } catch (IOException e) {
@@ -38,15 +38,13 @@ public class TextFile {
         lock.lock();
         try {
             while (!ready) txtSupplied.await();
-            try {
-                FileInputStream f = new FileInputStream(fileName);
-                DataInputStream in = new DataInputStream(f);
-                BufferedReader r = new BufferedReader(new InputStreamReader(in));
+            try (FileInputStream f = new FileInputStream(fileName);
+                 DataInputStream in = new DataInputStream(f);
+                 BufferedReader r = new BufferedReader(new InputStreamReader(in))) {
                 String strLine;
                 while ((strLine = r.readLine()) != null) {
                     txt = strLine;
                 }
-                in.close();
             } catch (IOException e) {
             }
             ready = false;
@@ -59,3 +57,5 @@ public class TextFile {
         }
     }
 }
+
+
